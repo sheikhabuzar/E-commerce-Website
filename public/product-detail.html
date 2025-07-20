@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Detail</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 1.5rem;
+      text-decoration: none;
+      color: #343a40;
+    }
+
+    .back-btn:hover {
+      color: #000;
+    }
+
+    .product-image img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    #commentContainer {
+      max-height: 500px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid #ddd;
+    }
+
+    .comment {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .reply-input {
+      margin-top: 10px;
+    }
+
+    .reply-btn {
+      font-size: 0.9rem;
+      color: #007bff;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background: white;
+      box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+      z-index: 1050;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      float: right;
+      margin: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <a href="/products.html" class="back-btn">←</a>
+
+  <!-- Page Content: Product + Comments -->
+  <div class="container mt-5">
+    <div class="row">
+      <!-- Product Info (Left Column) -->
+      <div id="productDetail" class="col-md-7">
+        <!-- Injected by JS -->
+      </div>
+
+     <!-- Comments (Right Column) -->
+<div class="col-md-5">
+  <h5 id="commentsHeading">Comments</h5>
+  <div class="mb-3">
+    <input id="newCommentInput" class="form-control" placeholder="Write a comment...">
+    <button id="postCommentBtn" class="btn btn-dark mt-2">Post</button>
+  </div>
+  <div id="commentContainer"></div>
+</div>
+
+
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar" class="cart-sidebar">
+    <button onclick="toggleCart()" class="close-btn">X</button>
+    <h4 class="p-3">Your Cart</h4>
+    <div id="cartItems" class="p-3"></div>
+    <div class="p-3 border-top">
+      <strong>Total: PKR <span id="totalAmount">0</span></strong>
+      <button class="btn btn-primary w-100 mt-2" onclick="checkout()">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/product-detail.js" type="module"></script>
+  <script src="js/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

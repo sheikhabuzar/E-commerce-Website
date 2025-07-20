@@ -1,0 +1,275 @@
+<!-- Final Merged File -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Products</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background-color: white;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      padding: 1rem 2rem;
+    }
+
+    .navbar-brand {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #343a40;
+    }
+
+    .nav-item a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-right: 1rem;
+      color: #555;
+      text-decoration: none;
+    }
+
+    .nav-item a:hover {
+      color: #000;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .search-bar {
+      flex: 1;
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-bar input {
+      width: 100%;
+    }
+
+    .free-delivery {
+      background-color: #f1f1f1;
+      padding: 0.75rem;
+      text-align: center;
+      font-weight: 500;
+      color: #007b5e;
+      font-size: 1rem;
+    }
+
+    .banner-image {
+      width: 100%;
+      height: 75vh;
+      object-fit: cover;
+      display: block;
+      border-radius: 0 0 2rem 2rem;
+    }
+
+    .products-container {
+      background-color: #ffffff;
+      border-radius: 1.5rem;
+      padding: 3rem 2rem;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      margin: 2rem auto;
+      max-width: 1300px;
+    }
+
+    .products-title {
+      font-weight: 800;
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      color: #333;
+    }
+
+    .product-card {
+      max-width: 220px;
+      margin: auto;
+      border: none;
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease;
+      font-size: 0.9rem;
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 160px;
+      object-fit: contain;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-top-left-radius: 1rem;
+      border-top-right-radius: 1rem;
+    }
+
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 400px;
+      height: 100%;
+      background-color: #ffffff;
+      box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+      transition: right 0.4s ease-in-out;
+      z-index: 1050;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .cart-btn {
+      background-color: #ffc107;
+      border: none;
+      font-size: 1.5rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+    }
+
+    .cart-btn:hover {
+      background-color: #e0a800;
+      cursor: pointer;
+    }
+
+    .cart-sidebar.open {
+      right: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="top-bar d-flex justify-content-between align-items-center w-100 flex-wrap">
+      <div class="d-flex align-items-center">
+        <span class="navbar-brand me-3">E-commerce Application</span>
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="categoriesDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            Categories
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="categoriesDropdown">
+            <li><a class="dropdown-item nav-category" href="#" data-category="">All Categories</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Polos">Polos</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Tees">Tees</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Chinos">Chinos</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Trousers">Trousers</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Casual Shirts">Casual Shirts</a></li>
+            <li><a class="dropdown-item nav-category" href="#" data-category="Jeans">Jeans</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+        <input type="text" id="searchInput" class="form-control" placeholder="Search by name..." />
+        <button class="btn cart-btn" onclick="toggleCart()" title="Go to Cart">
+          🛒
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Free Delivery Line -->
+  <div class="free-delivery">
+    Free Delivery on Orders Over PKR 2000
+  </div>
+
+  <!-- Banner -->
+  <div>
+    <img src="images/big.jpg" alt="Banner" class="banner-image" />
+  </div>
+
+  <!-- Products Section -->
+  <div class="container products-container">
+    <h2 class="products-title">Shop Men's Latest Summer Wear Collections</h2>
+
+    <!-- New Filter and Sort UI -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+      <!-- Sort Dropdown (Left) -->
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+          Sort By
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="sortDropdownBtn" id="sortDropdownMenu">
+          <li><a class="dropdown-item" href="#" data-value="">Default</a></li>
+          <li><a class="dropdown-item" href="#" data-value="price_asc">Price: Low to High</a></li>
+          <li><a class="dropdown-item" href="#" data-value="price_desc">Price: High to Low</a></li>
+          <li><a class="dropdown-item" href="#" data-value="date_desc">Newest First</a></li>
+          <li><a class="dropdown-item" href="#" data-value="date_asc">Oldest First</a></li>
+          <li><a class="dropdown-item" href="#" data-value="best_selling">Best Selling</a></li>
+        </ul>
+      </div>
+
+      <!-- Filter Dropdown (Right) -->
+      <div class="dropdown">
+        <button class="btn btn-outline-success dropdown-toggle" type="button" id="filterDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+          Filters
+        </button>
+        <div class="dropdown-menu p-3" style="min-width: 250px;" aria-labelledby="filterDropdownBtn">
+          <label class="form-label fw-bold">Sizes</label>
+          <div class="mb-2">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input size-filter" type="checkbox" value="S" id="sizeS">
+              <label class="form-check-label" for="sizeS">S</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input size-filter" type="checkbox" value="M" id="sizeM">
+              <label class="form-check-label" for="sizeM">M</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input size-filter" type="checkbox" value="L" id="sizeL">
+              <label class="form-check-label" for="sizeL">L</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input size-filter" type="checkbox" value="XL" id="sizeXL">
+              <label class="form-check-label" for="sizeXL">XL</label>
+            </div>
+          </div>
+          <label class="form-label fw-bold">Stock</label>
+          <select class="form-select mb-2" id="stockFilter">
+            <option value="">All Stock</option>
+            <option value="in">In Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
+          <button class="btn btn-primary w-100 mt-2" id="applyFiltersBtn">Apply Filters</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product List -->
+    <div id="productList" class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-3">
+      <!-- Products will be injected by JS -->
+    </div>
+
+    <!-- Pagination Controls -->
+    <div id="paginationContainer" class="my-3 text-center"></div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div id="cartSidebar" class="cart-sidebar">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h5>Your Cart</h5>
+      <button class="btn-close" onclick="toggleCart()"></button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-footer mt-3">
+      <h6>Total: PKR <span id="totalAmount">0</span></h6>
+      <button class="btn btn-success w-100 mt-2" onclick="checkout()">Checkout</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/checkout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
