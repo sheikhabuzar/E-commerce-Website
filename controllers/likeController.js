@@ -26,7 +26,6 @@ exports.toggleLike = async (req, res) => {
     res.status(500).json({ error: "Failed to toggle like" });
   }
 };
-
 exports.getLikeStatus = async (req, res) => {
   try {
     const userId = req.user.id;
