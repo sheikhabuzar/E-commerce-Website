@@ -1,6 +1,7 @@
-const { Product, Like, Comment, User } = require('../models');
+const { Product, Like, Comment, User, sequelize } = require('../models');
 const { Op } = require('sequelize');
 const { getProductDetailsOptimized } = require('../services/productDetailsService');
+const { QueryTypes } = require('sequelize');
 
 // CREATE Product
 exports.createProduct = async (req, res) => {
@@ -34,7 +35,6 @@ exports.createProduct = async (req, res) => {
 exports.getAllProducts = async (req, res) => {
   try {
     const limit = Math.min(Math.max(parseInt(req.query.limit) || 20, 1), 100);
-    if (limit <= 0) return res.status(400).json({ error: "Limit must be > 0" });
     const page = Math.max(parseInt(req.query.page) || 1, 1);
     const offset = (page - 1) * limit;
 
@@ -51,42 +51,56 @@ exports.getAllProducts = async (req, res) => {
 
     const where = {};
 
+    // Search by name
     if (search) {
       where.name = { [Op.iLike]: `%${search}%` };
     }
+
+    // Category filter
     if (category) {
       where.category = category;
     }
+
+    // Sizes filter (using overlap for array matching)
     if (sizeQuery && typeof sizeQuery === 'string') {
       const sizeArray = sizeQuery.split(',').map(s => s.trim()).filter(Boolean);
       if (sizeArray.length > 0) {
         where.sizes = { [Op.overlap]: sizeArray };
       }
     }
+
+    // Price range filter
     if (!isNaN(priceMin) || !isNaN(priceMax)) {
       where.price = {};
       if (!isNaN(priceMin)) where.price[Op.gte] = parseFloat(priceMin);
       if (!isNaN(priceMax)) where.price[Op.lte] = parseFloat(priceMax);
     }
+
+    // Stock filter
     if (stockFilter === 'in') {
       where.stock = { [Op.gt]: 0 };
     } else if (stockFilter === 'out') {
       where.stock = 0;
     }
 
-    const order = [[sortType === 'bestSelling' ? 'stock' : sortType, orderBy.toUpperCase()], ['id', orderBy.toUpperCase()]];
+    // Valid sortable fields
+    const validSortFields = ['id', 'name', 'price', 'stock', 'category', 'createdAt'];
+    const sortField = validSortFields.includes(sortType) ? sortType : 'createdAt';
+    const sortDirection = orderBy.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
 
-    // Log for debugging
-    console.log(`Product fetch: Page ${page}, Limit ${limit}, Filters:`, where);
+    const order = [[sortField, sortDirection], ['id', sortDirection]];
 
-    const { rows: products, count: total } = await Product.findAndCountAll({
-      where,
-      attributes: ['id', 'name', 'price', 'image', 'stock', 'category', 'sizes'],
-      order,
-      limit,
-      offset,
-      logging: false
-    });
+    // Query products and count in parallel
+    const [products, total] = await Promise.all([
+      Product.findAll({
+        where,
+        attributes: ['id', 'name', 'price', 'image', 'stock', 'category', 'sizes'],
+        order,
+        limit,
+        offset
+      }),
+      Product.count({ where })
+    ]);
 
     res.status(200).json({
       products,
@@ -96,10 +110,12 @@ exports.getAllProducts = async (req, res) => {
       total
     });
   } catch (err) {
-    console.error("💥 Error in GetProducts:", err, "Params:", req.query);
+    console.error("🔥 Optimized GetProducts Failed:", err);
     res.status(500).json({ message: "Server error", details: err.message });
   }
 };
+
+
 // GET by ID
 exports.getProductById = async (req, res) => {
   try {
