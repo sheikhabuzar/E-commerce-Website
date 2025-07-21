@@ -3,11 +3,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tidy Shop</title>
-  <meta http-equiv="refresh" content="0; URL=products.html" />
+  <title>Welcome</title>
+  <script>
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      window.location.href = "products.html";
+    } else {
+      window.location.href = "login.html";
+    }
+  </script>
 </head>
 <body>
-  Redirecting to products...
+  Redirecting...
 </body>
 </html>
