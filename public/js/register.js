@@ -7,7 +7,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     password: form.password.value
   };
 
-  const res = await fetch('/api/auth/register', {
+const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)

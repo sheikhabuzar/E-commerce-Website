@@ -16,7 +16,7 @@ async function checkout() {
     zip: prompt("Enter zip code")
   };
 
-  const res = await fetch('/api/checkout/create-checkout-session', {
+const res = await fetch(`${BACKEND_URL}/api/checkout/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

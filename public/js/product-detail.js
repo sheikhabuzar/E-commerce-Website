@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch(`/api/comments`, {
+        const response = await fetch(`${BACKEND_URL}/api/comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadProductDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-  const res = await fetch(`/api/products/${id}`);
+  const res = await fetch(`${BACKEND_URL}/api/products/${id}`);
   const product = await res.json();
 
   const imageUrl = product.image ? `/uploads/${product.image}` : 'default.jpg';
@@ -120,7 +120,7 @@ async function setupLikeFeature(productId) {
 
   // Load like status from backend
   try {
-    const res = await fetch(`/api/products/${productId}/likes`, {
+    const res = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -136,14 +136,14 @@ async function setupLikeFeature(productId) {
   // Handle toggle
   likeBtn.addEventListener('click', async () => {
     try {
-      await fetch(`/api/products/${productId}/like`, {
+      await fetch(`${BACKEND_URL}/api/products/${productId}/like`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
 
-      const resLike = await fetch(`/api/products/${productId}/likes`, {
+      const resLike = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -174,7 +174,7 @@ async function loadComments() {
   const id = params.get("id");
 
   try {
-    const res = await fetch(`/api/products/${id}/comments`);
+    const res = await fetch(`${BACKEND_URL}/api/products/${id}/comments`);
     const comments = await res.json();
 
     if (!Array.isArray(comments)) {
