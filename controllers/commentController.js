@@ -1,7 +1,7 @@
 const { Comment, User, sequelize } = require('../models');
 
 exports.createComment = async (req, res) => {
-  const t = await sequelize.transaction({ isolationLevel: 'SERIALIZABLE' });
+  const t = await sequelize.transaction();
   try {
     const { content, productId, parentCommentId } = req.body;
     const userId = req.user?.id;
