@@ -3,7 +3,7 @@ const User = require('./user');
 const Product = require('./product');
 const Order = require('./order');
 const Comment = require('./Comment');
-const Like = require('./like'); // 👈 NEW
+const Like = require('./like'); 
 
 // Product → Comments
 Product.hasMany(Comment, { foreignKey: 'productId' });
