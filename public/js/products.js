@@ -1,4 +1,21 @@
 const currentUserId = localStorage.getItem('currentUserId');
+// js/products.js
+
+const token = localStorage.getItem("jwt");
+
+fetch(`${BACKEND_URL}/api/products`, {
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+})
+  .then((res) => res.json())
+  .then((data) => {
+    console.log("Products:", data); // Check if data received
+    // Render product cards here using data
+  })
+  .catch((err) => {
+    console.error("Error loading products:", err);
+  });
 
 // Helpers to get/set cart for current user
 function getCartForUser() {
