@@ -1,17 +1,14 @@
 const { Comment, User, sequelize } = require('../models');
 
 exports.createComment = async (req, res) => {
-  const t = await sequelize.transaction();
   try {
     const { content, productId, parentCommentId } = req.body;
     const userId = req.user?.id;
 
     if (!userId) {
-      await t.rollback();
       return res.status(401).json({ error: 'Unauthorized. No user ID found.' });
     }
     if (!content || !productId) {
-      await t.rollback();
       return res.status(400).json({ error: 'Content and productId are required.' });
     }
 
@@ -19,9 +16,8 @@ exports.createComment = async (req, res) => {
     let finalParentId = parentCommentId || null;
 
     if (parentCommentId) {
-      const parentComment = await Comment.findByPk(parentCommentId, { transaction: t, lock: t.LOCK.UPDATE });
+      const parentComment = await Comment.findByPk(parentCommentId);
       if (!parentComment) {
-        await t.rollback();
         return res.status(404).json({ error: 'Parent comment not found' });
       }
       const parentDepth = parentComment.depth || 0;
@@ -39,21 +35,14 @@ exports.createComment = async (req, res) => {
       userId,
       parentCommentId: finalParentId,
       depth
-    }, { transaction: t });
-
-    const fullComment = await Comment.findByPk(newComment.id, {
-      include: [{ model: User, attributes: ['id', 'name'] }],
-      transaction: t
     });
 
-    await t.commit();
+    const fullComment = await Comment.findByPk(newComment.id, {
+      include: [{ model: User, attributes: ['id', 'name'] }]
+    });
+
     res.status(201).json(fullComment);
   } catch (err) {
-    await t.rollback();
-    // If serialization error, ask client to retry
-    if (err.parent && err.parent.code === '40001') {
-      return res.status(409).json({ error: "Please retry your request" });
-    }
     console.error("Error creating comment:", err);
     res.status(500).json({ error: 'Failed to create comment', details: err.message });
   }
