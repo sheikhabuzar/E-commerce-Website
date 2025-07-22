@@ -61,7 +61,10 @@ async function loadProductDetail() {
   });
   const product = await res.json();
 
-  const imageUrl = product.image ? `/uploads/${product.image}` : 'default.jpg';
+  const imageUrl = product.image
+    ? `${BACKEND_URL}/uploads/${product.image}`
+    : `${BACKEND_URL}/uploads/default.jpg`;
+  document.getElementById('productImage').src = imageUrl;
 
   const container = document.getElementById("productDetail");
   container.innerHTML = `
@@ -103,18 +106,24 @@ async function loadProductDetail() {
     heading.textContent = `Comments on "${product.name}"`;
   }
   // Event: Add to Cart
-  document.getElementById("addToCartBtn").addEventListener("click", () => {
-    const selectedSizeButton = document.querySelector(".btn-size.active");
-    if (!selectedSizeButton) {
-      alert("Please select a size.");
-      return;
-    }
-    const size = selectedSizeButton.innerText;
-    addToCart(product, size);
-  });
+  const addToCartBtn = document.getElementById("addToCartBtn");
+  if (addToCartBtn) {
+    addToCartBtn.addEventListener("click", () => {
+      const selectedSizeButton = document.querySelector(".btn-size.active");
+      if (!selectedSizeButton) {
+        alert("Please select a size.");
+        return;
+      }
+      const size = selectedSizeButton.innerText;
+      addToCart(product, size);
+    });
+  }
 
   // ✅ Like Button Logic (after HTML is injected)
-  setupLikeFeature(id);
+  const likeBtn = document.getElementById('likeBtn');
+  if (likeBtn) {
+    setupLikeFeature(id);
+  }
 }
 
 async function setupLikeFeature(productId) {
