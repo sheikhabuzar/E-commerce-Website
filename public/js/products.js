@@ -1,3 +1,4 @@
+
 const currentUserId = localStorage.getItem('currentUserId');
 
 // Helpers to get/set cart for current user
