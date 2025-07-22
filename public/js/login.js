@@ -4,7 +4,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
 const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    },
     body: JSON.stringify({
       email: form.email.value,
       password: form.password.value

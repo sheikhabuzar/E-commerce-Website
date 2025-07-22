@@ -20,7 +20,8 @@ const res = await fetch(`${BACKEND_URL}/api/checkout/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
+      'Authorization': 'Bearer ' + token,
+      'ngrok-skip-browser-warning': 'true'
     },
     body: JSON.stringify({ cart, shippingInfo })
   });

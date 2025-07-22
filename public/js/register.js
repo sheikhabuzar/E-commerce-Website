@@ -9,7 +9,10 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
 
 const res = await fetch(`${BACKEND_URL}/api/auth/register`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'ngrok-skip-browser-warning': 'true'
+    },
     body: JSON.stringify(data)
   });
 

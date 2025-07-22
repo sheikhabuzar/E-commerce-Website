@@ -93,7 +93,11 @@ async function fetchProducts(page = 1) {
   if (currentStock) url += `&stock=${encodeURIComponent(currentStock)}`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    });
     if (!res.ok) {
       // Not a 2xx response
       const text = await res.text();
@@ -104,7 +108,7 @@ async function fetchProducts(page = 1) {
     if (!data.products) {
       throw new Error("API did not return products array.");
     }
-
+    
     // Render products
     const container = document.getElementById('productList');
     container.innerHTML = '';

@@ -24,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true'
           },
           body: JSON.stringify({
             content: commentText,
@@ -53,7 +54,11 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadProductDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-  const res = await fetch(`${BACKEND_URL}/api/products/${id}`);
+  const res = await fetch(`${BACKEND_URL}/api/products/${id}`, {
+    headers: {
+      'ngrok-skip-browser-warning': 'true'
+    }
+  });
   const product = await res.json();
 
   const imageUrl = product.image ? `/uploads/${product.image}` : 'default.jpg';
@@ -122,7 +127,8 @@ async function setupLikeFeature(productId) {
   try {
     const res = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
       }
     });
 
@@ -139,13 +145,15 @@ async function setupLikeFeature(productId) {
       await fetch(`${BACKEND_URL}/api/products/${productId}/like`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'ngrok-skip-browser-warning': 'true'
         }
       });
 
       const resLike = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          'ngrok-skip-browser-warning': 'true'
         }
       });
       const likeData = await resLike.json();
@@ -174,7 +182,11 @@ async function loadComments() {
   const id = params.get("id");
 
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products/${id}/comments`);
+    const res = await fetch(`${BACKEND_URL}/api/products/${id}/comments`, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
+    });
     const comments = await res.json();
 
     if (!Array.isArray(comments)) {
@@ -211,7 +223,8 @@ async function handleReplySubmit(parentCommentId, inputElement) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true'
       },
       body: JSON.stringify({
         content: commentText,
