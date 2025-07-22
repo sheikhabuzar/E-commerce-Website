@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 async function fetchProducts(page = 1) {
   currentPage = page;
-  let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
+  let url =  'https://1c9610707762.ngrok-free.app/api/products?page=' + page + '&limit=100';
 
   // build up url with search, category, sort, filters...
   const search = document.getElementById("searchInput").value.trim().toLowerCase();
