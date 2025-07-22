@@ -80,65 +80,34 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial fetch
   fetchProducts();
 });
+
 async function fetchProducts(page = 1) {
   currentPage = page;
-  let url =  'https://1c9610707762.ngrok-free.app/api/products?page=' + page + '&limit=100';
 
-  // build up url with search, category, sort, filters...
-  const search = document.getElementById("searchInput").value.trim().toLowerCase();
-  if (search)       url += `&search=${encodeURIComponent(search)}`;
-  if (currentCategory) url += `&category=${encodeURIComponent(currentCategory)}`;
-  if (currentSort) url += `&sortType=${currentSort}`;
-  if (currentOrder) url += `&orderBy=${currentOrder}`;
-  if (currentSizes.length) url += `&size=${encodeURIComponent(currentSizes.join(','))}`;
-  if (currentStock)       url += `&stock=${encodeURIComponent(currentStock)}`;
+  // ✅ Use global BACKEND_URL from config.js
+  const base = window.BACKEND_URL || '';
+  let url = `${base}/api/products?page=${page}&limit=100`;
+
+  console.log("📡 Fetching:", url);
 
   try {
     const res = await fetch(url);
-    // if the server returns a 404, 500, etc., read the body as text so you can see what HTML it actually sent:
+
+    // ✅ Check if it's an error (like 404 or 500)
     if (!res.ok) {
-      const text = await res.text();
-      console.error(`Error ${res.status} loading products:`, text);
-      return alert("Could not load products. Check console for details.");
+      const html = await res.text(); // Even if it's HTML error, capture it
+      console.error(`API Error ${res.status}:`, html);
+      return alert('Failed to load products—see console.');
     }
 
-    // Now we *know* it’s JSON:
+    // ✅ Try parsing response as JSON (only if status is OK)
     const data = await res.json();
-    const products = data.products || [];
-
-    // 1️⃣ Render product cards
-    const container = document.getElementById('productList');
-    container.innerHTML = '';
-    products.forEach(p => {
-      const imageUrl = p.image ? `${BACKEND_URL}/uploads/${p.image}` : 'default.jpg';
-      container.innerHTML += `
-        <div class="col-md-4">
-          <div class="card product-card">
-            <img src="${imageUrl}" class="product-image" alt="${p.name}" />
-            <div class="card-body d-flex flex-column">
-              <div class="product-title">${p.name}</div>
-              <div class="product-size text-muted">Size: ${p.sizes ? p.sizes.join(', ') : 'N/A'}</div>
-              <div class="product-price">PKR ${p.price}</div>
-              <div class="product-description">${p.description}</div>
-              <div class="text-muted small mt-2">Stock: ${p.stock}</div>
-              <a class="btn btn-info my-2" href="/product-detail.html?id=${p.id}">
-                <i class="bi bi-eye"></i> View Details
-              </a>
-              <button class="btn btn-success mt-auto" onclick='addToCart(${JSON.stringify(p)})'>
-                <i class="bi bi-cart-plus"></i> Add to Cart
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-    });
-
-    // 2️⃣ Render pagination
+    renderProducts(data.products);
     renderPagination(data.currentPage, data.totalPages);
   }
   catch (err) {
     console.error("Network or parsing error:", err);
-    alert("Network error. See console for details.");
+    alert("Network error—see console.");
   }
 }
 
