@@ -90,7 +90,8 @@ async function fetchProducts(page = 1) {
   currentPage = page;
   let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
   console.log("Fetching products from:", url);
-  const search = document.getElementById("searchInput").value.toLowerCase();
+  const searchInput = document.getElementById("searchInput");
+  const search = searchInput ? searchInput.value.toLowerCase() : "";
   if (search) url += `&search=${encodeURIComponent(search)}`;
   if (currentCategory) url += `&category=${encodeURIComponent(currentCategory)}`;
   if (currentSort) url += `&sortType=${currentSort}`;
