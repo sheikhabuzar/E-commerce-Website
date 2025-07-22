@@ -83,8 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchProducts(page = 1) {
   currentPage = page;
-
-let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
+  let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
   const search = document.getElementById("searchInput").value.toLowerCase();
   if (search) url += `&search=${encodeURIComponent(search)}`;
   if (currentCategory) url += `&category=${encodeURIComponent(currentCategory)}`;
@@ -93,52 +92,52 @@ let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
   if (currentSizes.length) url += `&size=${encodeURIComponent(currentSizes.join(','))}`;
   if (currentStock) url += `&stock=${encodeURIComponent(currentStock)}`;
 
-  const res = await fetch(url);
-  const data = await res.json();
-  const products = data.products;
-
-  const container = document.getElementById('productList');
-  container.innerHTML = '';
-
-  products.forEach(p => {
-    const imageUrl = p.image ? `/uploads/${p.image}` : 'default.jpg';
-    const card = `
-      <div class="col-md-4">
-        <div class="card product-card">
-          <img src="${imageUrl}" class="product-image" alt="${p.name}" />
-          <div class="card-body d-flex flex-column">
-            <div class="product-title">${p.name}</div>
-            <div class="product-size text-muted">Size: ${p.sizes ? p.sizes.join(', ') : 'N/A'}</div>
-            <div class="product-price">PKR ${p.price}</div>
-            <div class="product-description">${p.description}</div>
-            <div class="text-muted small mt-2">Stock: ${p.stock}</div>
-            <a class="btn btn-info my-2" href="/product-detail.html?id=${p.id}">
-              <i class="bi bi-eye"></i> View Details
-            </a>
-            <a href="/product-detail.html?id=${p.id}" class="btn btn-success mt-auto">
-              <i class="bi bi-cart-plus"></i> Add to Cart
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
-    container.innerHTML += card;
-  });
   try {
     const res = await fetch(url);
-    const text = await res.text();
-    try {
-      const data = JSON.parse(text);
-      // ... your existing code to render products
-    } catch (jsonErr) {
-      console.error("Not JSON! Response was:", text);
-      alert("Products API did not return JSON. Check the console for details.");
+    if (!res.ok) {
+      // Not a 2xx response
+      const text = await res.text();
+      throw new Error(`API error: ${res.status} ${res.statusText}\n${text}`);
     }
+    // Try to parse JSON
+    const data = await res.json();
+    if (!data.products) {
+      throw new Error("API did not return products array.");
+    }
+
+    // Render products
+    const container = document.getElementById('productList');
+    container.innerHTML = '';
+    data.products.forEach(p => {
+      const imageUrl = p.image ? `/uploads/${p.image}` : 'default.jpg';
+      const card = `
+        <div class="col-md-4">
+          <div class="card product-card">
+            <img src="${imageUrl}" class="product-image" alt="${p.name}" />
+            <div class="card-body d-flex flex-column">
+              <div class="product-title">${p.name}</div>
+              <div class="product-size text-muted">Size: ${p.sizes ? p.sizes.join(', ') : 'N/A'}</div>
+              <div class="product-price">PKR ${p.price}</div>
+              <div class="product-description">${p.description}</div>
+              <div class="text-muted small mt-2">Stock: ${p.stock}</div>
+              <a class="btn btn-info my-2" href="/product-detail.html?id=${p.id}">
+                <i class="bi bi-eye"></i> View Details
+              </a>
+              <a href="/product-detail.html?id=${p.id}" class="btn btn-success mt-auto">
+                <i class="bi bi-cart-plus"></i> Add to Cart
+              </a>
+            </div>
+          </div>
+        </div>
+      `;
+      container.innerHTML += card;
+    });
+    renderPagination(data.currentPage, data.totalPages);
   } catch (err) {
-    console.error("Network error:", err);
-    alert("Network error. Check the console for details.");
+    // If response is not JSON, print the actual response
+    console.error("Error fetching products:", err);
+    alert("Failed to load products. See console for details.");
   }
-  renderPagination(data.currentPage, data.totalPages);
 }
 
 function renderPagination(current, total) {
