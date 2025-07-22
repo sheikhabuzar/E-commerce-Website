@@ -62,8 +62,8 @@ async function loadProductDetail() {
   const product = await res.json();
 
   const imageUrl = product.image
-    ? `${BACKEND_URL}/uploads/${product.image}`
-    : `${BACKEND_URL}/uploads/default.jpg`;
+    ? `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/' + product.image)}`
+    : `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/default.jpg')}`;
   const img = document.getElementById('productImage');
   if (img) {
     img.src = imageUrl;

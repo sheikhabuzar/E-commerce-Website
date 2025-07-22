@@ -120,8 +120,8 @@ async function fetchProducts(page = 1) {
     container.innerHTML = '';
     data.products.forEach(p => {
       const imageUrl = p.image
-        ? `${BACKEND_URL}/uploads/${p.image}`
-        : `${BACKEND_URL}/uploads/default.jpg`;
+        ? `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/' + p.image)}`
+        : `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/default.jpg')}`;
       const card = `
         <div class="col-md-4">
           <div class="card product-card">

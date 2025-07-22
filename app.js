@@ -10,6 +10,7 @@ connectMongo();
 
 // RAW BODY ONLY FOR WEBHOOK
 const bodyParser = require('body-parser');
+const fetch = require('node-fetch');
 
 const app = express();
 
@@ -29,6 +30,26 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/comments', require('./routes/commentRoutes'));
 app.use('/api/checkout', require('./routes/checkoutRoutes'));
 app.use('/api/mongo', require('./routes/mongoCommentRoutes'));
+
+// Image proxy endpoint to bypass ngrok browser warning for images
+app.get('/image-proxy', async (req, res) => {
+  const imageUrl = req.query.url;
+  if (!imageUrl) {
+    return res.status(400).send('Missing url parameter');
+  }
+  try {
+    const response = await fetch(imageUrl, {
+      headers: { 'ngrok-skip-browser-warning': 'true' }
+    });
+    if (!response.ok) {
+      return res.status(response.status).send('Image not found');
+    }
+    res.set('Content-Type', response.headers.get('content-type'));
+    response.body.pipe(res);
+  } catch (err) {
+    res.status(500).send('Proxy error');
+  }
+});
 
 // 4️⃣ Sync PostgreSQL database
 syncDB();
