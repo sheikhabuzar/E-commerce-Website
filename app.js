@@ -27,7 +27,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/comments', require('./routes/commentRoutes'));
 app.use('/api/checkout', require('./routes/checkoutRoutes'));
-app.use('/api/mongo', require('./routes/mongoCommentRoutes'));
 
 // Image proxy endpoint to bypass ngrok browser warning for images
 app.get('/image-proxy', async (req, res) => {
