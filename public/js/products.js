@@ -87,9 +87,10 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial fetch
   fetchProducts();
 });
+const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
 async function fetchProducts(page = 1) {
   currentPage = page;
-  let url = `/api/products?page=${currentPage}&limit=100`;
+  let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
   console.log("Fetching products from:", url);
   
   const searchInput = document.getElementById("searchInput");
@@ -123,7 +124,9 @@ async function fetchProducts(page = 1) {
     }
 
     data.products.forEach(p => {
-      const imageUrl = p.image ? `/uploads/${p.image}` : `/uploads/default.jpg`;
+      const imageUrl = p.image && p.image.startsWith('http')
+        ? p.image
+        : `${BACKEND_URL}/uploads/${p.image}`;
       const card = `
         <div class="col-md-4">
           <div class="card product-card">
@@ -215,7 +218,7 @@ function loadCart() {
     total += item.price * item.quantity;
     cartContainer.innerHTML += `
       <div class="cart-item d-flex mb-3 align-items-center">
-        <img src="/uploads/${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;" />
+        <img src="${BACKEND_URL}/uploads/${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; margin-right: 10px;" />
         <div class="flex-grow-1">
           <div><strong>${item.name}</strong> <small class="text-muted">(Size: ${item.size || 'N/A'})</small></div>
           <div>Price: PKR ${item.price}</div>

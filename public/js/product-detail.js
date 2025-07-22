@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch(`/api/comments`, {
+        const response = await fetch(`${BACKEND_URL}/api/comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -54,16 +54,16 @@ async function loadProductDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   console.log('Loading product detail for ID:', id);
-  const res = await fetch(`/api/products/${id}`);
+  const res = await fetch(`${BACKEND_URL}/api/products/${id}`);
   if (!res.ok) {
     const container = document.getElementById("productDetail");
     container.innerHTML = `<div class='alert alert-danger'>Failed to load product details. Please try again later.</div>`;
     return;
   }
   const product = await res.json();
-  const imageUrl = product.image
-    ? `/uploads/${product.image}`
-    : `/uploads/default.jpg`;
+  const imageUrl = product.image && product.image.startsWith('http')
+    ? product.image
+    : `/uploads/${product.image}`;
   const img = document.getElementById('productImage');
   if (img) {
     img.src = imageUrl;
@@ -124,7 +124,7 @@ async function setupLikeFeature(productId) {
   const token = localStorage.getItem('jwtToken');
   if (!likeBtn || !token) return;
   try {
-    const res = await fetch(`/api/products/${productId}/likes`, {
+    const res = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -137,13 +137,13 @@ async function setupLikeFeature(productId) {
   }
   likeBtn.addEventListener('click', async () => {
     try {
-      await fetch(`/api/products/${productId}/like`, {
+      await fetch(`${BACKEND_URL}/api/products/${productId}/like`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      const resLike = await fetch(`/api/products/${productId}/likes`, {
+      const resLike = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -173,7 +173,7 @@ async function loadComments() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   try {
-    const res = await fetch(`/api/products/${id}/comments`);
+    const res = await fetch(`${BACKEND_URL}/api/products/${id}/comments`);
     const comments = await res.json();
     if (!Array.isArray(comments)) {
       console.warn("⚠️ Comments response is not an array:", comments);
@@ -200,7 +200,7 @@ async function handleReplySubmit(parentCommentId, inputElement) {
     return;
   }
   try {
-    const response = await fetch(`/api/comments`, {
+    const response = await fetch(`${BACKEND_URL}/api/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

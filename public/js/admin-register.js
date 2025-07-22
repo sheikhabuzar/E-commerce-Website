@@ -7,7 +7,8 @@ document.getElementById('adminRegisterForm').addEventListener('submit', async (e
     password: form.password.value
   };
 
-  const res = await fetch(`/api/auth/admin/register`, {
+  const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
+  const res = await fetch(`${BACKEND_URL}/api/auth/admin/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

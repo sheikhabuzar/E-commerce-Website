@@ -2,7 +2,8 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const form = e.target;
 
-const res = await fetch(`/api/auth/login`, {
+const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
+const res = await fetch(`${BACKEND_URL}/api/auth/login`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
