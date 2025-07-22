@@ -5,8 +5,6 @@ require('dotenv').config();
 
 const { syncDB } = require('./models');
 // ✅ Connect to MongoDB (Mongo Comments Only)
-const connectMongo = require("./mongo/connection");
-connectMongo();
 
 // RAW BODY ONLY FOR WEBHOOK
 const bodyParser = require('body-parser');
