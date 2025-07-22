@@ -80,38 +80,38 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial fetch
   fetchProducts();
 });
-
 async function fetchProducts(page = 1) {
   currentPage = page;
   let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
-  console.log("Fetching products from:", url);
-  const search = document.getElementById("searchInput").value.toLowerCase();
-  if (search) url += `&search=${encodeURIComponent(search)}`;
+
+  // build up url with search, category, sort, filters...
+  const search = document.getElementById("searchInput").value.trim().toLowerCase();
+  if (search)       url += `&search=${encodeURIComponent(search)}`;
   if (currentCategory) url += `&category=${encodeURIComponent(currentCategory)}`;
   if (currentSort) url += `&sortType=${currentSort}`;
   if (currentOrder) url += `&orderBy=${currentOrder}`;
   if (currentSizes.length) url += `&size=${encodeURIComponent(currentSizes.join(','))}`;
-  if (currentStock) url += `&stock=${encodeURIComponent(currentStock)}`;
+  if (currentStock)       url += `&stock=${encodeURIComponent(currentStock)}`;
 
   try {
     const res = await fetch(url);
+    // if the server returns a 404, 500, etc., read the body as text so you can see what HTML it actually sent:
     if (!res.ok) {
-      // Not a 2xx response
       const text = await res.text();
-      throw new Error(`API error: ${res.status} ${res.statusText}\n${text}`);
-    }
-    // Try to parse JSON
-    const data = await res.json();
-    if (!data.products) {
-      throw new Error("API did not return products array.");
+      console.error(`Error ${res.status} loading products:`, text);
+      return alert("Could not load products. Check console for details.");
     }
 
-    // Render products
+    // Now we *know* it’s JSON:
+    const data = await res.json();
+    const products = data.products || [];
+
+    // 1️⃣ Render product cards
     const container = document.getElementById('productList');
     container.innerHTML = '';
-    data.products.forEach(p => {
-      const imageUrl = p.image ? `/uploads/${p.image}` : 'default.jpg';
-      const card = `
+    products.forEach(p => {
+      const imageUrl = p.image ? `${BACKEND_URL}/uploads/${p.image}` : 'default.jpg';
+      container.innerHTML += `
         <div class="col-md-4">
           <div class="card product-card">
             <img src="${imageUrl}" class="product-image" alt="${p.name}" />
@@ -124,22 +124,24 @@ async function fetchProducts(page = 1) {
               <a class="btn btn-info my-2" href="/product-detail.html?id=${p.id}">
                 <i class="bi bi-eye"></i> View Details
               </a>
-              <a href="/product-detail.html?id=${p.id}" class="btn btn-success mt-auto">
+              <button class="btn btn-success mt-auto" onclick='addToCart(${JSON.stringify(p)})'>
                 <i class="bi bi-cart-plus"></i> Add to Cart
-              </a>
+              </button>
             </div>
           </div>
         </div>
       `;
-      container.innerHTML += card;
     });
+
+    // 2️⃣ Render pagination
     renderPagination(data.currentPage, data.totalPages);
-  } catch (err) {
-    // If response is not JSON, print the actual response
-    console.error("Error fetching products:", err);
-    alert("Failed to load products. See console for details.");
+  }
+  catch (err) {
+    console.error("Network or parsing error:", err);
+    alert("Network error. See console for details.");
   }
 }
+
 
 function renderPagination(current, total) {
   const container = document.getElementById('paginationContainer');
