@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchProducts(page = 1) {
-  
+  console.log("Fetching products from:", url);
   currentPage = page;
   let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
   const search = document.getElementById("searchInput").value.toLowerCase();
