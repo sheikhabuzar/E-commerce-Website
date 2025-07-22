@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 6️⃣ SPA catch-all - serve product.html for any unmatched route
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'product.html'));
+  res.sendFile(path.join(__dirname, 'public', 'products.html'));
 });
 
 module.exports = app;
