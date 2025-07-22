@@ -1,37 +1,43 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const app = express();
 require('dotenv').config();
-const { syncDB } = require('./models');
-/*const compression = require('compression');
-app.use(compression());*/
 
+const { syncDB } = require('./models');
 // ✅ Connect to MongoDB (Mongo Comments Only)
-const connectMongo = require("./mongo/connection");connectMongo(); // MongoDB connected
+const connectMongo = require("./mongo/connection");
+connectMongo();
 
 // RAW BODY ONLY FOR WEBHOOK
 const bodyParser = require('body-parser');
-app.use('/webhook', bodyParser.raw({ type: 'application/json' })); // ONLY RAW HERE
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, 'public')));
+const app = express();
 
-// JSON Body for everything else (MUST COME AFTER /webhook)
+// 1️⃣ Webhook raw body parser
+app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
+
+// 2️⃣ Enable CORS and JSON parsing for API routes
 app.use(cors());
 app.use(express.json());
 
-// 🔁 Routes
+// 3️⃣ API Routes (register before serving frontend)
 app.use('/webhook', require('./routes/webhook'));
 app.use('/api/auth', require('./routes/authRoutes'));
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/comments', require('./routes/commentRoutes'));
 app.use('/api/checkout', require('./routes/checkoutRoutes'));
-
-// ✅ New Mongo Comments Route
 app.use('/api/mongo', require('./routes/mongoCommentRoutes'));
-// Sync PostgreSQL DB
+
+// 4️⃣ Sync PostgreSQL database
 syncDB();
+
+// 5️⃣ Serve static frontend assets
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 6️⃣ SPA catch-all - serve product.html for any unmatched route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'product.html'));
+});
 
 module.exports = app;
