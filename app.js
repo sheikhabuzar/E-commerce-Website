@@ -18,7 +18,7 @@ app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
 
 // 2️⃣ Enable CORS and JSON parsing for API routes
 app.use(cors({
-  origin: 'https://jade-fudge-94f735.netlify.app'
+  origin: 'https://jazzy-kitsune-26f404.netlify.app'
 }));
 app.options('*', cors());
 app.use(express.json());
