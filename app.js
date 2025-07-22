@@ -17,7 +17,10 @@ const app = express();
 app.use('/webhook', bodyParser.raw({ type: 'application/json' }));
 
 // 2️⃣ Enable CORS and JSON parsing for API routes
-app.use(cors());
+app.use(cors({
+  origin: 'https://jade-fudge-94f735.netlify.app'
+}));
+app.options('*', cors());
 app.use(express.json());
 
 // 3️⃣ API Routes (register before serving frontend)
@@ -35,8 +38,8 @@ syncDB();
 // 5️⃣ Serve static frontend assets
 app.use(express.static(path.join(__dirname, 'public')));
 
-// 6️⃣ SPA catch-all - serve product.html for any unmatched route
-app.get('*', (req, res) => {
+// 6️⃣ SPA catch-all - serve products.html for any unmatched non-API route
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'products.html'));
 });
 
