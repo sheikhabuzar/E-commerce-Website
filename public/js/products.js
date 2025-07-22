@@ -50,21 +50,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Filter apply button
-  document.getElementById('applyFiltersBtn')?.addEventListener('click', function () {
-    // Sizes (multi-select)
-    currentSizes = [];
-    document.querySelectorAll('.size-filter:checked').forEach(cb => {
-      currentSizes.push(cb.value);
+  const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+  if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', function () {
+      // Sizes (multi-select)
+      currentSizes = [];
+      document.querySelectorAll('.size-filter:checked').forEach(cb => {
+        currentSizes.push(cb.value);
+      });
+      // Stock
+      currentStock = document.getElementById('stockFilter').value;
+      fetchProducts();
+      // Optionally close dropdown
+      document.getElementById('filterDropdownBtn')?.click();
     });
-    // Stock
-    currentStock = document.getElementById('stockFilter').value;
-    fetchProducts();
-    // Optionally close dropdown
-    document.getElementById('filterDropdownBtn')?.click();
-  });
+  }
 
   // Search input
-  document.getElementById("searchInput").addEventListener("input", () => fetchProducts());
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    searchInput.addEventListener("input", () => fetchProducts());
+  }
 
   // Category click
   document.querySelectorAll('.nav-category').forEach(link => {

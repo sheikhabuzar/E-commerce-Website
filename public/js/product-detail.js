@@ -64,7 +64,10 @@ async function loadProductDetail() {
   const imageUrl = product.image
     ? `${BACKEND_URL}/uploads/${product.image}`
     : `${BACKEND_URL}/uploads/default.jpg`;
-  document.getElementById('productImage').src = imageUrl;
+  const img = document.getElementById('productImage');
+  if (img) {
+    img.src = imageUrl;
+  }
 
   const container = document.getElementById("productDetail");
   container.innerHTML = `
