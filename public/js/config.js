@@ -1,2 +1,2 @@
 // public/js/config.js
-const BACKEND_URL = "https://a8df351b86d7.ngrok-free.app";
+const BACKEND_URL = "https://78cf6c1a3016.ngrok-free.app";
