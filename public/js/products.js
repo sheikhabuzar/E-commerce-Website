@@ -124,7 +124,20 @@ let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
     `;
     container.innerHTML += card;
   });
-
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    try {
+      const data = JSON.parse(text);
+      // ... your existing code to render products
+    } catch (jsonErr) {
+      console.error("Not JSON! Response was:", text);
+      alert("Products API did not return JSON. Check the console for details.");
+    }
+  } catch (err) {
+    console.error("Network error:", err);
+    alert("Network error. Check the console for details.");
+  }
   renderPagination(data.currentPage, data.totalPages);
 }
 
