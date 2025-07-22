@@ -2,11 +2,7 @@ const token = localStorage.getItem('token');
 
 // Fetch & display all products
 async function fetchAdminProducts() {
-  const res = await fetch(`${BACKEND_URL}/api/products?page=1&limit=100`, {
-    headers: {
-      'ngrok-skip-browser-warning': 'true'
-    }
-  });
+  const res = await fetch(`/api/products?page=1&limit=100`);
 const data = await res.json();
 const products = data.products;
   const container = document.getElementById('adminProductList');
@@ -33,11 +29,10 @@ const products = data.products;
 // DELETE
 async function deleteProduct(id) {
   if (!confirm("Delete this product?")) return;
-  const res = await fetch(`${BACKEND_URL}/api/products/${id}`, {
+  const res = await fetch(`/api/products/${id}`, {
     method: 'DELETE',
     headers: {
-      Authorization: 'Bearer ' + token,
-      'ngrok-skip-browser-warning': 'true'
+      Authorization: 'Bearer ' + token
     }
   });
   if (res.ok) {
@@ -50,11 +45,7 @@ async function deleteProduct(id) {
 
 // EDIT
 async function editProduct(id) {
-  const res = await fetch(`${BACKEND_URL}/api/products/${id}`, {
-    headers: {
-      'ngrok-skip-browser-warning': 'true'
-    }
-  });
+  const res = await fetch(`/api/products/${id}`);
   const p = await res.json();
 
   const form = document.getElementById('productForm');//Load that product information automatically in form
@@ -82,10 +73,10 @@ document.getElementById('productForm').addEventListener('submit', async function
   const formData = new FormData(form);//Gathers all input data
   const productId = form.dataset.id;//this is used to detect the mode
   //  Don't append sizes manually — FormData handles it already
-  let url = `${BACKEND_URL}/api/products`;//we assume that its create new request
+  let url = `/api/products`;//we assume that its create new request
   let method = 'POST';
   if (productId) {
-    url = `${BACKEND_URL}/api/products/${productId}`;
+    url = `/api/products/${productId}`;
     method = 'PUT';
     formData.append('_method', 'PUT'); // depends on your server that allows post with override
   }
@@ -93,8 +84,7 @@ document.getElementById('productForm').addEventListener('submit', async function
   const res = await fetch(url, {
     method,
     headers: {
-      Authorization: 'Bearer ' + token,
-      'ngrok-skip-browser-warning': 'true'
+      Authorization: 'Bearer ' + token
       // No need to set Content-Type manually when using FormData
     },
     body: formData

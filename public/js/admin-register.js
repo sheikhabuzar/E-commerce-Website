@@ -7,11 +7,10 @@ document.getElementById('adminRegisterForm').addEventListener('submit', async (e
     password: form.password.value
   };
 
-  const res = await fetch(`${BACKEND_URL}/api/auth/admin/register`, {
+  const res = await fetch(`/api/auth/admin/register`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      'ngrok-skip-browser-warning': 'true'
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify(data)
   });

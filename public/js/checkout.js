@@ -1,7 +1,7 @@
 async function checkout() {
   const token = localStorage.getItem('token');
   const decoded = JSON.parse(atob(token.split('.')[1])); // decode JWT payload
-  const userId = decoded.userId;
+  const userId = decoded.id;
   const cart = JSON.parse(localStorage.getItem(`cart_${userId}`)) || [];
 
   if (cart.length === 0) {
@@ -9,19 +9,22 @@ async function checkout() {
     return;
   }
 
-  const shippingInfo = {
-    name: prompt("Enter your full name"),
-    address: prompt("Enter your address"),
-    city: prompt("Enter city"),
-    zip: prompt("Enter zip code")
-  };
+  const name = prompt("Enter your full name");
+  if (name === null) return;
+  const address = prompt("Enter your address");
+  if (address === null) return;
+  const city = prompt("Enter city");
+  if (city === null) return;
+  const zip = prompt("Enter zip code");
+  if (zip === null) return;
 
-const res = await fetch(`${BACKEND_URL}/api/checkout/create-checkout-session`, {
+  const shippingInfo = { name, address, city, zip };
+
+const res = await fetch(`/api/checkout/create-checkout-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token,
-      'ngrok-skip-browser-warning': 'true'
+      'Authorization': 'Bearer ' + token
     },
     body: JSON.stringify({ cart, shippingInfo })
   });

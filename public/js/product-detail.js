@@ -20,12 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        const response = await fetch(`${BACKEND_URL}/api/comments`, {
+        const response = await fetch(`/api/comments`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
-            'ngrok-skip-browser-warning': 'true'
           },
           body: JSON.stringify({
             content: commentText,
@@ -54,41 +53,37 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadProductDetail() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-  const res = await fetch(`${BACKEND_URL}/api/products/${id}`, {
-    headers: {
-      'ngrok-skip-browser-warning': 'true'
-    }
-  });
+  console.log('Loading product detail for ID:', id);
+  const res = await fetch(`/api/products/${id}`);
+  if (!res.ok) {
+    const container = document.getElementById("productDetail");
+    container.innerHTML = `<div class='alert alert-danger'>Failed to load product details. Please try again later.</div>`;
+    return;
+  }
   const product = await res.json();
-
   const imageUrl = product.image
-    ? `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/' + product.image)}`
-    : `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/default.jpg')}`;
+    ? `/uploads/${product.image}`
+    : `/uploads/default.jpg`;
   const img = document.getElementById('productImage');
   if (img) {
     img.src = imageUrl;
   }
-
   const container = document.getElementById("productDetail");
   container.innerHTML = `
     <div class="card p-3">
       <div class="product-image mb-3 text-center">
         <img src="${imageUrl}" class="img-fluid rounded" alt="${product.name}" style="max-height:300px; object-fit:contain;" />
       </div>
-
       <h3 class="product-title">${product.name}</h3>
       <p class="product-price text-danger fs-5">PKR ${product.price}</p>
       <p class="product-description">${product.description}</p>
-
       <div><strong>Category:</strong> ${product.category || 'N/A'}</div>
       <div><strong>Stock:</strong> ${product.stock}</div>
-
       <div class="mt-2">
         <button id="likeBtn" class="btn btn-outline-danger">
-          🤍 Like (<span id="likeCount">0</span>)
+          🧡 Like (<span id="likeCount">0</span>)
         </button>
       </div>
-
       <div class="mt-3">
         <strong>Select Size:</strong>
         <div id="sizeButtons" class="d-flex flex-wrap gap-2 mt-2">
@@ -99,16 +94,13 @@ async function loadProductDetail() {
           `).join('')}
         </div>
       </div>
-
       <button id="addToCartBtn" class="btn btn-dark w-100 mt-3">Add to Cart</button>
     </div>
   `;
-  // Inject product name into comments heading
   const heading = document.getElementById('commentsHeading');
   if (heading) {
     heading.textContent = `Comments on "${product.name}"`;
   }
-  // Event: Add to Cart
   const addToCartBtn = document.getElementById("addToCartBtn");
   if (addToCartBtn) {
     addToCartBtn.addEventListener("click", () => {
@@ -121,8 +113,6 @@ async function loadProductDetail() {
       addToCart(product, size);
     });
   }
-
-  // ✅ Like Button Logic (after HTML is injected)
   const likeBtn = document.getElementById('likeBtn');
   if (likeBtn) {
     setupLikeFeature(id);
@@ -132,40 +122,30 @@ async function loadProductDetail() {
 async function setupLikeFeature(productId) {
   const likeBtn = document.getElementById('likeBtn');
   const token = localStorage.getItem('jwtToken');
-
   if (!likeBtn || !token) return;
-
-  // Load like status from backend
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
+    const res = await fetch(`/api/products/${productId}/likes`, {
       headers: {
-        Authorization: `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true'
+        Authorization: `Bearer ${token}`
       }
     });
-
     const data = await res.json();
     document.getElementById('likeCount').innerText = data.totalLikes;
     updateLikeButton(data.likedByCurrentUser);
   } catch (err) {
     console.error("Failed to load like info:", err);
   }
-
-  // Handle toggle
   likeBtn.addEventListener('click', async () => {
     try {
-      await fetch(`${BACKEND_URL}/api/products/${productId}/like`, {
+      await fetch(`/api/products/${productId}/like`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
-          'ngrok-skip-browser-warning': 'true'
+          Authorization: `Bearer ${token}`
         }
       });
-
-      const resLike = await fetch(`${BACKEND_URL}/api/products/${productId}/likes`, {
+      const resLike = await fetch(`/api/products/${productId}/likes`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'ngrok-skip-browser-warning': 'true'
+          Authorization: `Bearer ${token}`
         }
       });
       const likeData = await resLike.json();
@@ -192,24 +172,16 @@ async function setupLikeFeature(productId) {
 async function loadComments() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-
   try {
-    const res = await fetch(`${BACKEND_URL}/api/products/${id}/comments`, {
-      headers: {
-        'ngrok-skip-browser-warning': 'true'
-      }
-    });
+    const res = await fetch(`/api/products/${id}/comments`);
     const comments = await res.json();
-
     if (!Array.isArray(comments)) {
       console.warn("⚠️ Comments response is not an array:", comments);
       document.getElementById('commentContainer').innerHTML = '<div class="text-danger">Failed to load comments.</div>';
       return;
     }
-
     const container = document.getElementById('commentContainer');
     if (!container) return;
-
     container.innerHTML = '';
     renderComments(comments, container, handleReplySubmit);
   } catch (err) {
@@ -221,22 +193,18 @@ async function loadComments() {
 async function handleReplySubmit(parentCommentId, inputElement) {
   const commentText = inputElement.value.trim();
   if (!commentText) return;
-
   const token = localStorage.getItem("jwtToken");
   const userId = localStorage.getItem("currentUserId");
-
   if (!token || !userId) {
     alert("You must be logged in to reply.");
     return;
   }
-
   try {
     const response = await fetch(`/api/comments`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': 'true'
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
         content: commentText,
@@ -244,7 +212,6 @@ async function handleReplySubmit(parentCommentId, inputElement) {
         parentCommentId
       })
     });
-
     if (response.ok) {
       inputElement.value = '';
       await loadComments();

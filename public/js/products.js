@@ -89,8 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 async function fetchProducts(page = 1) {
   currentPage = page;
-  let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;
+  let url = `/api/products?page=${currentPage}&limit=100`;
   console.log("Fetching products from:", url);
+  
   const searchInput = document.getElementById("searchInput");
   const search = searchInput ? searchInput.value.toLowerCase() : "";
   if (search) url += `&search=${encodeURIComponent(search)}`;
@@ -101,29 +102,28 @@ async function fetchProducts(page = 1) {
   if (currentStock) url += `&stock=${encodeURIComponent(currentStock)}`;
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        'ngrok-skip-browser-warning': 'true'
-      }
-    });
+    const res = await fetch(url);
     if (!res.ok) {
-      // Not a 2xx response
       const text = await res.text();
       throw new Error(`API error: ${res.status} ${res.statusText}\n${text}`);
     }
-    // Try to parse JSON
+
     const data = await res.json();
-    if (!data.products) {
+    
+    // ✅ Fix: use Array.isArray to check
+    if (!Array.isArray(data.products)) {
       throw new Error("API did not return products array.");
     }
-    
-    // Render products
+
     const container = document.getElementById('productList');
     container.innerHTML = '';
+
+    if (data.products.length === 0) {
+      container.innerHTML = `<div class="col-12"><p class="text-center text-muted">No products found.</p></div>`;
+    }
+
     data.products.forEach(p => {
-      const imageUrl = p.image
-        ? `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/' + p.image)}`
-        : `/image-proxy?url=${encodeURIComponent(BACKEND_URL + '/uploads/default.jpg')}`;
+      const imageUrl = p.image ? `/uploads/${p.image}` : `/uploads/default.jpg`;
       const card = `
         <div class="col-md-4">
           <div class="card product-card">
@@ -146,10 +146,10 @@ async function fetchProducts(page = 1) {
       `;
       container.innerHTML += card;
     });
+
     renderPagination(data.currentPage, data.totalPages);
   } catch (err) {
-    // If response is not JSON, print the actual response
-    console.error("Error fetching products:", err);
+    console.error("Error fetching products:", err.message);
     alert("Failed to load products. See console for details.");
   }
 }
