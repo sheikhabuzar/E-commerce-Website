@@ -62,9 +62,14 @@ async function loadProductDetail() {
     return;
   }
   const product = await res.json();
-  const imageUrl = product.image && product.image.startsWith('http')
-    ? product.image
-    : `/uploads/${product.image}`;
+
+  // Use Cloudinary default if image is missing or is 'default.jpg'
+  const imageUrl = !product.image || product.image === 'default.jpg'
+    ? 'https://res.cloudinary.com/dw1ijcd7g/image/upload/v1753221769/default_cw8yer.webp'
+    : (product.image.startsWith('http')
+        ? product.image
+        : `${BACKEND_URL}/uploads/${product.image}`);
+
   const img = document.getElementById('productImage');
   if (img) {
     img.src = imageUrl;
