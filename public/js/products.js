@@ -153,7 +153,6 @@ async function fetchProducts(page = 1) {
     renderPagination(data.currentPage, data.totalPages);
   } catch (err) {
     console.error("Error fetching products:", err.message);
-    alert("Failed to load products. See console for details.");
   }
 }
 
