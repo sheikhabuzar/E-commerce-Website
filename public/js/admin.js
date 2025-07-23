@@ -1,15 +1,24 @@
 const token = localStorage.getItem('token');
 const BACKEND_URL = 'https://blissful-dream-production.up.railway.app';
 
-// Fetch & display all products
-async function fetchAdminProducts() {
-  const res = await fetch(`${BACKEND_URL}/api/products?page=1&limit=100`);
-const data = await res.json();
-const products = data.products;
-  const container = document.getElementById('adminProductList');
-  container.innerHTML = '';//Clear existing HTML
+let currentAdminPage = 1;
+const adminProductsPerPage = 10;
+let allAdminProducts = [];
 
-  products.forEach(p => {
+async function fetchAdminProducts() {
+  const res = await fetch(`${BACKEND_URL}/api/products?page=1&limit=1000`); // fetch all for admin
+  const data = await res.json();
+  allAdminProducts = data.products;
+  renderAdminProducts();
+}
+
+function renderAdminProducts() {
+  const container = document.getElementById('adminProductList');
+  container.innerHTML = '';
+  const start = (currentAdminPage - 1) * adminProductsPerPage;
+  const end = start + adminProductsPerPage;
+  const pageProducts = allAdminProducts.slice(start, end);
+  pageProducts.forEach(p => {
     const imageUrl = p.image && p.image.startsWith('http')
       ? p.image
       : `${BACKEND_URL}/uploads/${p.image}`;
@@ -28,6 +37,36 @@ const products = data.products;
         </div>
       </div>`;
   });
+  renderAdminPagination();
+}
+
+function renderAdminPagination() {
+  const container = document.getElementById('adminProductList');
+  const totalPages = Math.ceil(allAdminProducts.length / adminProductsPerPage);
+  let html = '<div class="col-12 d-flex justify-content-center my-3">';
+  if (currentAdminPage > 1) {
+    html += `<button class="btn btn-outline-primary mx-1" onclick="prevAdminPage()">Previous</button>`;
+  }
+  html += `<span class="mx-2">Page ${currentAdminPage} of ${totalPages}</span>`;
+  if (currentAdminPage < totalPages) {
+    html += `<button class="btn btn-outline-primary mx-1" onclick="nextAdminPage()">Next</button>`;
+  }
+  html += '</div>';
+  container.innerHTML += html;
+}
+
+window.prevAdminPage = function() {
+  if (currentAdminPage > 1) {
+    currentAdminPage--;
+    renderAdminProducts();
+  }
+}
+window.nextAdminPage = function() {
+  const totalPages = Math.ceil(allAdminProducts.length / adminProductsPerPage);
+  if (currentAdminPage < totalPages) {
+    currentAdminPage++;
+    renderAdminProducts();
+  }
 }
 
 // DELETE
