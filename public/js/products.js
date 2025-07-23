@@ -115,7 +115,7 @@ async function fetchProducts(page = 1) {
     if (!Array.isArray(data.products)) {
       throw new Error("API did not return products array.");
     }
-
+    
     const container = document.getElementById('productList');
     container.innerHTML = '';
 
