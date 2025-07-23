@@ -71,30 +71,37 @@ document.getElementById('productForm').addEventListener('submit', async function
   e.preventDefault();
 
   const form = e.target;
-  const formData = new FormData(form);//Gathers all input data
-  const productId = form.dataset.id;//this is used to detect the mode
-  //  Don't append sizes manually — FormData handles it already
-  let url = `${BACKEND_URL}/api/products`;//we assume that its create new request
+  const productId = form.dataset.id;
+  const data = {
+    name: form.name.value,
+    price: form.price.value,
+    description: form.description.value,
+    stock: form.stock.value,
+    category: form.category.value,
+    sizes: Array.from(form.sizes.selectedOptions).map(opt => opt.value),
+    image: form.image.value // Use the Cloudinary URL
+  };
+
+  let url = `${BACKEND_URL}/api/products`;
   let method = 'POST';
   if (productId) {
     url = `${BACKEND_URL}/api/products/${productId}`;
     method = 'PUT';
-    formData.append('_method', 'PUT'); // depends on your server that allows post with override
   }
 
   const res = await fetch(url, {
     method,
     headers: {
+      'Content-Type': 'application/json',
       Authorization: 'Bearer ' + token
-      // No need to set Content-Type manually when using FormData
     },
-    body: formData
+    body: JSON.stringify(data)
   });
 
   if (res.ok) {
-    alert(productId ? 'Product updated ' : 'Product added ');
+    alert(productId ? 'Product updated' : 'Product added');
     form.reset();
-    delete form.dataset.id; // Clear stored ID after update
+    delete form.dataset.id;
     fetchAdminProducts();
   } else {
     const errData = await res.json();

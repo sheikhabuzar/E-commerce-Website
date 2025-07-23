@@ -1,19 +1,20 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Welcome</title>
-  <script>
-    const token = localStorage.getItem("jwt");
-    if (token) {
-      window.location.href = "products.html";
-    } else {
-      window.location.href = "register.html";
-    }
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #f8f9fa; }
+    .role-btn { margin: 10px; padding: 15px 30px; font-size: 1.2rem; border: none; border-radius: 6px; background: #343a40; color: #fff; cursor: pointer; }
+    .role-btn:hover { background: #007bff; }
+  </style>
 </head>
 <body>
-  Redirecting...
+  <h1>Welcome to E-commerce Application</h1>
+  <button class="role-btn" onclick="window.location.href='register.html'">Register as Customer</button>
+  <button class="role-btn" onclick="window.location.href='admin-register.html'">Register as Admin</button>
+  <button class="role-btn" onclick="window.location.href='login.html'">Login as Customer</button>
+  <button class="role-btn" onclick="window.location.href='login.html?admin=1'">Login as Admin</button>
 </body>
 </html>
