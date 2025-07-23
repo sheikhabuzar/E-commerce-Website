@@ -58,6 +58,10 @@ syncDB();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 6️⃣ SPA catch-all - serve products.html for any unmatched non-API route
+
+// Add health check route for debugging
+app.get('/health', (req, res) => res.send('OK'));
+
 app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'products.html'));
 });
