@@ -10,10 +10,13 @@ const products = data.products;
   container.innerHTML = '';//Clear existing HTML
 
   products.forEach(p => {
+    const imageUrl = p.image && p.image.startsWith('http')
+      ? p.image
+      : `${BACKEND_URL}/uploads/${p.image}`;
     container.innerHTML += `
       <div class="col-md-4">
         <div class="card mb-3">
-          <img src="/uploads/${p.image}" class="card-img-top" height="200">
+          <img src="${imageUrl}" class="card-img-top" height="200">
           <div class="card-body">
             <h5>${p.name}</h5>
             <p>${p.description}</p>
