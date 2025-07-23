@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial fetch
   fetchProducts();
 });
-const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
+const BACKEND_URL = 'https://blissful-dream-production.up.railway.app';
 async function fetchProducts(page = 1) {
   currentPage = page;
   let url = `${BACKEND_URL}/api/products?page=${currentPage}&limit=100`;

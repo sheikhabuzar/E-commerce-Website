@@ -1,5 +1,5 @@
 const token = localStorage.getItem('token');
-const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
+const BACKEND_URL = 'https://blissful-dream-production.up.railway.app';
 
 // Fetch & display all products
 async function fetchAdminProducts() {

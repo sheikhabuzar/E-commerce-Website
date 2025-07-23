@@ -20,23 +20,23 @@ async function checkout() {
 
   const shippingInfo = { name, address, city, zip };
 
-const BACKEND_URL = 'https://e-commerce-website-production-e831.up.railway.app';
+const BACKEND_URL = 'https://blissful-dream-production.up.railway.app';
 const res = await fetch(`${BACKEND_URL}/api/checkout/create-checkout-session`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + token
-    },
-    body: JSON.stringify({ cart, shippingInfo })
-  });
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  },
+  body: JSON.stringify({ cart, shippingInfo })
+});
 
-  const data = await res.json();
-  if (data.url) {
-    //  Clear cart after successful checkout initiation
-    localStorage.removeItem(`cart_${userId}`);
-    localStorage.removeItem('cart'); // optional backup clear
-    window.location.href = data.url;
-  } else {
-    alert("Checkout failed");
-  }
+const data = await res.json();
+if (data.url) {
+  //  Clear cart after successful checkout initiation
+  localStorage.removeItem(`cart_${userId}`);
+  localStorage.removeItem('cart'); // optional backup clear
+  window.location.href = data.url;
+} else {
+  alert("Checkout failed");
+}
 }
