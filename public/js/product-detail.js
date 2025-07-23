@@ -1,3 +1,4 @@
+const BACKEND_URL = 'https://blissful-dream-production.up.railway.app';
 import { renderComments } from './comment-utils.js';
 
 document.addEventListener('DOMContentLoaded', () => {
