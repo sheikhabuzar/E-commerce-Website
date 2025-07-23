@@ -254,5 +254,9 @@ function addToCart(product, size) {
   }
 
   localStorage.setItem('cart_' + userId, JSON.stringify(cart));
-  toggleCart();
+  if (typeof window.toggleCart === 'function') {
+    window.toggleCart();
+  } else {
+    alert('Added to cart! (Cart sidebar not available on this page)');
+  }
 }
