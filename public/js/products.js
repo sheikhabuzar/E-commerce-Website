@@ -258,3 +258,4 @@ function removeItem(index) {
 }
 
 window.fetchProducts = fetchProducts;
+window.toggleCart = toggleCart;
