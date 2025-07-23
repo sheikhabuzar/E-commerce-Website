@@ -59,6 +59,7 @@ async function loadProductDetail() {
   if (!res.ok) {
     const container = document.getElementById("productDetail");
     container.innerHTML = `<div class='alert alert-danger'>Failed to load product details. Please try again later.</div>`;
+    // Silenced alert: Failed to load products. See console for details.
     return;
   }
   const product = await res.json();
