@@ -6,7 +6,7 @@ const { QueryTypes } = require('sequelize');
 // CREATE Product
 exports.createProduct = async (req, res) => {
   try {
-    const { name, description, price, stock, category } = req.body;
+    const { name, description, price, stock, category, image: imageUrl } = req.body;
     const sizesRaw = req.body.sizes;
     const sizes = Array.isArray(sizesRaw)
       ? sizesRaw
@@ -14,7 +14,8 @@ exports.createProduct = async (req, res) => {
         ? sizesRaw.split(',').map(s => s.trim())
         : [];
 
-    const image = req.file ? req.file.filename : null;
+    // Prefer imageUrl from body (Cloudinary), fallback to uploaded file
+    const image = imageUrl ? imageUrl : (req.file ? req.file.filename : null);
 
     const product = await Product.create({
       name,
