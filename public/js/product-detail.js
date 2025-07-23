@@ -257,6 +257,7 @@ function addToCart(product, size) {
   if (typeof window.toggleCart === 'function') {
     window.toggleCart();
   } else {
-    alert('Added to cart! (Cart sidebar not available on this page)');
+    alert('Added to cart!');
+    window.location.href = '/products.html';
   }
 }
